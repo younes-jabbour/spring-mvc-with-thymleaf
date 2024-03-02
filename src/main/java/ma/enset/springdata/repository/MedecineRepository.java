@@ -14,7 +14,7 @@ public interface MedecineRepository extends JpaRepository<Medecine,Long> {
 
     public Optional<Medecine> findById(Long id);
 
-    public Medecine findByName(String name);
+    public List<Medecine> findByName(String name);
 
     public void deleteById(Long id);
 }

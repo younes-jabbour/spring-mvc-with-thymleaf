@@ -15,11 +15,20 @@ public class Medecine {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private String email;
     private String specialite;
 
     @OneToMany(mappedBy = "medecine", fetch = FetchType.LAZY)
     private Collection<Appointment> appointment;
+
+    @Override
+    public String toString() {
+        return "Medecine{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", specialite='" + specialite + '\'' +
+                // don't print the appointment property here
+                '}';
+    }
 }

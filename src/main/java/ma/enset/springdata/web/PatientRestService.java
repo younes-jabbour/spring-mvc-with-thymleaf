@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @RestController
-public class ProductRestService {
+public class PatientRestService {
 
     @Autowired
     private PatientRepository patientRepository;

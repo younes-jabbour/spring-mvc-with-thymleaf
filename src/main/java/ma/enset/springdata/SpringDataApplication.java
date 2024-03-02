@@ -7,6 +7,7 @@ import ma.enset.springdata.entities.status;
 import ma.enset.springdata.repository.AppointmentRepository;
 import ma.enset.springdata.repository.MedecineRepository;
 import ma.enset.springdata.repository.PatientRepository;
+import ma.enset.springdata.service.IHospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,38 +26,28 @@ public class SpringDataApplication {
     }
 
     @Bean
-    CommandLineRunner start(
-            PatientRepository patientRepository
-            , MedecineRepository medecineRepository
-                , AppointmentRepository appointmentRepository ) {
+    CommandLineRunner start(IHospitalService iHospitalService) {
         return args -> {
-            Stream.of("Hassan", "ali", "salah").forEach(nom -> {
+            Stream.of("salah", "salah", "salah").forEach(nom -> {
                 Medecine medecine = new Medecine();
                 medecine.setName(nom);
                 medecine.setSpecialite(Math.random() > 0.5 ? "Cardiologist" : "Dentist");
-                medecineRepository.save(medecine);
+                iHospitalService.registerMedecine(medecine);
             });
 
-            Stream.of("Younes", "aziz", "ilham").forEach(nom -> {
+            Stream.of("Younes", "ali", "ilham").forEach(nom -> {
                 Patient patient = new Patient();
                 patient.setName(nom);
                 patient.setBirthDate(new Date());
                 patient.setSick(!(Math.random() > 0.5));
-                patientRepository.save(patient);
+                iHospitalService.registerPatient(patient);
             });
 
-            Medecine medecine = medecineRepository.findByName("ali");
-            Patient patient = patientRepository.findByName("Younes");
-            Appointment appointment = new Appointment();
+            List<Medecine> medecines = iHospitalService.searchMedecine("salah");
 
-
-            appointment.setDate(new Date().toString());
-            appointment.setTime("10:00");
-            appointment.setStatus(status.planifiee);
-            appointment.setMedecine(medecine);
-            appointment.setPatient(patient);
-
-            appointmentRepository.save(appointment);
+            medecines.forEach(m -> {
+                System.out.println(m.getName());
+            });
         };
 
     }
