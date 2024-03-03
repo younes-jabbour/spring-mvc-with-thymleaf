@@ -118,7 +118,7 @@ spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MariaDBDialect
 
 > Diagramme de classe 
 
-!["Image description"](img/diagramme de classe.png)
+!["Image description"](img/diagramme%20de%20classe.png)
 
 > l'entité <strong>Patient</strong>
 ```java
@@ -195,3 +195,17 @@ public class Consultation {
 
 }
 ```
+
+## le Test d'un web service RESTful pour la gestion des patients
+
+### get all patients
+
+```java
+
+@GetMapping("/patients")
+    public List<Patient> getAllPatients() {
+        return iHospitalService.getAll();
+    }
+```
+### Test avec : http://localhost:8085/patients
+[![Image description](img/web.png)]

@@ -16,7 +16,6 @@ public class PatientRestService {
     @Autowired
     private PatientRepository patientRepository;
 
-
     @GetMapping("/patients")
     public List<Patient> getPatients() {
         return patientRepository.getAll();
