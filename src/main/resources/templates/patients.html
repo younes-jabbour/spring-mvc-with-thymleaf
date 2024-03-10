@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template.html"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Hospital</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mx-auto mt-1">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-center">
+                    <h1>List of Patients</h1>
+                </div>
+            </div>
+            <form th:action="@{/user/index(keyword=${currentPage})}" method="get">
+                <div class="d-flex flex-row justify-content-between mx-4 my-5">
+                    <!-- button for adding new Patient -->
+                    <a type="button" th:href="@{/admin/formPatient}" class="btn btn-primary">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-person-add" viewBox="0 0 16 16">
+                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                        </svg>
+                        Add patient
+                    </a>
+                    <div>
+                        <label>
+                            <input type="text" th:value="${keyword.isEmpty() ? '' : keyword}" name="keyword"
+                                   class="form-control">
+                        </label>
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </div>
+            </form>
+            <div class="card-body">
+                <div class="w-100 flex-row justify-content-center" th:if="${#lists.isEmpty(listPatients)}">
+                    <div class="d-flex justify-content-center">
+                        <h1>Patients not found</h1>
+                    </div>
+                </div>
+
+                <table th:unless="${#lists.isEmpty(listPatients)}" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>date</th>
+                        <th>malade</th>
+                        <th>score</th>
+                        <th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">operations</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="p:${listPatients}">
+                        <td th:text="${p.id}">Id</td>
+                        <td th:text="${p.name}">Name</td>
+                        <td th:text="${p.birthDate}">date</td>
+                        <td th:text="${p.sick}">malade</td>
+                        <td th:text="${p.score}">score</td>
+                        <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                            <div class="d-flex align-items-center gap-2">
+                                <a onclick="return confirm('etes vous sur de supprimer le patient')"
+                                   class="btn btn-danger mr-5"
+                                   th:href="@{/admin/deletePatient(id=${p.id},page=${currentPage}, keyword=${keyword})}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-person-dash" viewBox="0 0 16 16">
+                                        <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                                        <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                                    </svg>
+                                </a>
+
+                                <!--edit button-->
+                                <button type="button" class="btn btn-warning"
+                                        data-bs-toggle="modal"
+                                        th:attr="data-bs-target='#exampleModal'+${p.id}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-pen"
+                                         viewBox="0 0 16 16">
+                                        <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <!--delete button-->
+
+                            <!-- dialog for editing the Patient information -->
+                            <div class="modal fade" th:id="'exampleModal'+${p.id}" tabindex="-1"
+                                 aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Edit patient</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form th:action="@{/admin/updatePatient}" method="post">
+                                                <input type="hidden" th:value="${p.id}" name="id"/>
+                                                <!--name-->
+                                                <div class="form-floating mb-3">
+                                                    <input th:value="${p.name}" type="text" class="form-control"
+                                                           id="name"
+                                                           name="name" placeholder="name">
+                                                    <label for="name">Name</label>
+                                                </div>
+                                                <!--date-->
+                                                <div class="form-floating mb-3">
+                                                    <input th:value="${p.birthDate}" type="date" class="form-control"
+                                                           id="date" name="birthdate" placeholder="birth date">
+                                                    <label for="date">date</label>
+                                                </div>
+                                                <!--is sick-->
+                                                <div class="form-floating mb-3">
+                                                    <select class="form-select" id="sick" name="sick" aria-label="sick">
+                                                        <option value="false" th:selected="${!p.sick}">False</option>
+                                                        <option value="true" th:selected="${p.sick}">True</option>
+                                                    </select>
+                                                    <label for="sick">Sick</label>
+                                                </div>
+                                                <!--score-->
+                                                <div class="form-floating mb-3">
+                                                    <input th:value="${p.score}" type="text" class="form-control"
+                                                           id="score"
+                                                           name="score" placeholder="score">
+                                                    <label for="score">Score</label>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" id="btnClose" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close
+                                                    </button>
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <ul class="pagination pagination-sm">
+                    <li th:each="page, status:${pages}"
+                        th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
+                        <a th:class="page-link"
+                           th:href="@{index(page=${status.index})}"
+                           th:text="${status.index}"></a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
